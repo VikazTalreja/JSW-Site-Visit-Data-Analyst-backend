@@ -1,0 +1,404 @@
+{
+    "sales_visits": [
+      {
+        "owner_name": "Rohan Mehta",
+        "visit_date": "15-Jan-2024",
+        "customer_name": "Aarav Steel Traders",
+        "region": "West",
+        "product_division": "Structural Steel",
+        "next_steps": "PO for 150 MT delayed due to GST invoice discrepancy. Revised docs to be shared by 18-Jan."
+      },
+      {
+        "owner_name": "Rohan Mehta",
+        "visit_date": "02-Feb-2024",
+        "customer_name": "Bharat Forge Ltd.",
+        "region": "South",
+        "product_division": "Heavy Plates",
+        "next_steps": "Customer requested 7-day credit extension. Approval from finance team pending."
+      },
+      {
+        "owner_name": "Rohan Mehta",
+        "visit_date": "19-Mar-2024",
+        "customer_name": "Chandak Engineering",
+        "region": "North",
+        "product_division": "PEB Division",
+        "next_steps": "Technical audit scheduled on 25-Mar. Finalizing pricing for 3-year contract."
+      },
+      {
+        "owner_name": "Rohan Mehta",
+        "visit_date": "05-Apr-2024",
+        "customer_name": "Doshi Fabricators",
+        "region": "East",
+        "product_division": "Rebar & TMT",
+        "next_steps": "Urgent follow-up for ₹42L overdue payment. Customer promises clearance by 10-Apr."
+      },
+      {
+        "owner_name": "Rohan Mehta",
+        "visit_date": "22-May-2024",
+        "customer_name": "Elite Constructions",
+        "region": "West",
+        "product_division": "Structural Steel",
+        "next_steps": "Bulk order negotiation stuck on freight charges. Revised quote with logistics terms sent."
+      },
+      {
+        "owner_name": "Rohan Mehta",
+        "visit_date": "08-Jun-2024",
+        "customer_name": "Falcon Infrastructure",
+        "region": "South",
+        "product_division": "Automotive Steel",
+        "next_steps": "Sample testing failed; replacement batch to be dispatched by 12-Jun."
+      },
+      {
+        "owner_name": "Rohan Mehta",
+        "visit_date": "25-Jul-2024",
+        "customer_name": "Goyal Steels",
+        "region": "North",
+        "product_division": "Wire Rods",
+        "next_steps": "PO for 80 MT approved. Delivery schedule clash resolved with plant team."
+      },
+      {
+        "owner_name": "Rohan Mehta",
+        "visit_date": "11-Aug-2024",
+        "customer_name": "Hitech Metalworks",
+        "region": "East",
+        "product_division": "Stainless Steel",
+        "next_steps": "Customer demands ISO certification copies. Compliance team to email by 13-Aug."
+      },
+      {
+        "owner_name": "Rohan Mehta",
+        "visit_date": "28-Sep-2024",
+        "customer_name": "Indo Pipes Corp.",
+        "region": "West",
+        "product_division": "Alloy Steel",
+        "next_steps": "Price renegotiation after raw material cost drop. Revised agreement drafted."
+      },
+      {
+        "owner_name": "Rohan Mehta",
+        "visit_date": "14-Oct-2024",
+        "customer_name": "Jain Builders",
+        "region": "South",
+        "product_division": "PEB Division",
+        "next_steps": "Channel finance via ICICI Bank approved. PO release expected post-Diwali."
+      },
+      {
+        "owner_name": "Priya Sharma",
+        "visit_date": "03-Mar-2024",
+        "customer_name": "Kirti Steels",
+        "region": "North",
+        "product_division": "Structural Steel",
+        "next_steps": "Customer insists on 5% discount for advance payment. Proposal sent for MD approval."
+      },
+      {
+        "owner_name": "Priya Sharma",
+        "visit_date": "20-Apr-2024",
+        "customer_name": "Laxmi Metallics",
+        "region": "East",
+        "product_division": "Rebar & TMT",
+        "next_steps": "Quality complaint for last batch. Technical team visit scheduled on 22-Apr."
+      },
+      {
+        "owner_name": "Priya Sharma",
+        "visit_date": "07-May-2024",
+        "customer_name": "Mangal Engineering",
+        "region": "South",
+        "product_division": "Automotive Steel",
+        "next_steps": "Trial order of 20 MT confirmed. Delivery by 10-May; payment terms 50% advance."
+      },
+      {
+        "owner_name": "Priya Sharma",
+        "visit_date": "23-Jun-2024",
+        "customer_name": "Nandan Infra",
+        "region": "West",
+        "product_division": "Heavy Plates",
+        "next_steps": "Bank guarantee submitted; awaiting project approval from PMC."
+      },
+      {
+        "owner_name": "Priya Sharma",
+        "visit_date": "10-Jul-2024",
+        "customer_name": "Omkar Constructions",
+        "region": "North",
+        "product_division": "PEB Division",
+        "next_steps": "Customer requests AE visit for site measurement. Planned on 15-Jul."
+      },
+      {
+        "owner_name": "Priya Sharma",
+        "visit_date": "27-Aug-2024",
+        "customer_name": "Prakash Steel",
+        "region": "East",
+        "product_division": "Wire Rods",
+        "next_steps": "Payment delay due to internal audit. Committed to clear dues by 1-Sep."
+      },
+      {
+        "owner_name": "Priya Sharma",
+        "visit_date": "13-Sep-2024",
+        "customer_name": "Quick Fab",
+        "region": "South",
+        "product_division": "Stainless Steel",
+        "next_steps": "Urgent order for 30 MT. Logistics team arranging transport by 15-Sep."
+      },
+      {
+        "owner_name": "Priya Sharma",
+        "visit_date": "30-Oct-2024",
+        "customer_name": "Rajhans Metals",
+        "region": "West",
+        "product_division": "Alloy Steel",
+        "next_steps": "Price escalation clause rejected. Revised contract under discussion."
+      },
+      {
+        "owner_name": "Priya Sharma",
+        "visit_date": "16-Nov-2024",
+        "customer_name": "Sairam Forge",
+        "region": "North",
+        "product_division": "Structural Steel",
+        "next_steps": "PO for 250 MT held up due to budget reallocation. Follow-up on 20-Nov."
+      },
+      {
+        "owner_name": "Priya Sharma",
+        "visit_date": "03-Dec-2024",
+        "customer_name": "Titan Steel",
+        "region": "East",
+        "product_division": "Rebar & TMT",
+        "next_steps": "Customer requests 90-day credit. Negotiating terms with finance team."
+      },
+      {
+        "owner_name": "Arjun Patel",
+        "visit_date": "22-Apr-2024",
+        "customer_name": "Uday Steels",
+        "region": "South",
+        "product_division": "Automotive Steel",
+        "next_steps": "Sample certification submitted. Awaiting feedback by 25-Apr."
+      },
+      {
+        "owner_name": "Arjun Patel",
+        "visit_date": "09-May-2024",
+        "customer_name": "Vijay Engineering",
+        "region": "West",
+        "product_division": "Heavy Plates",
+        "next_steps": "Urgent requirement for 120 MT. Production team confirming stock availability."
+      },
+      {
+        "owner_name": "Arjun Patel",
+        "visit_date": "26-Jun-2024",
+        "customer_name": "Western Metals",
+        "region": "North",
+        "product_division": "PEB Division",
+        "next_steps": "Delayed payment due to bank holiday. Cleared on 28-Jun."
+      },
+      {
+        "owner_name": "Arjun Patel",
+        "visit_date": "12-Jul-2024",
+        "customer_name": "Xcell Fabricators",
+        "region": "East",
+        "product_division": "Wire Rods",
+        "next_steps": "Customer unhappy with surface finish. Replacement material dispatched."
+      },
+      {
+        "owner_name": "Arjun Patel",
+        "visit_date": "29-Aug-2024",
+        "customer_name": "Yash Steels",
+        "region": "South",
+        "product_division": "Stainless Steel",
+        "next_steps": "New vendor registration pending. Docs submitted to procurement team."
+      },
+      {
+        "owner_name": "Arjun Patel",
+        "visit_date": "15-Sep-2024",
+        "customer_name": "Zenith Constructions",
+        "region": "West",
+        "product_division": "Alloy Steel",
+        "next_steps": "Order scaled down from 500 MT to 300 MT due to funding issues."
+      },
+      {
+        "owner_name": "Arjun Patel",
+        "visit_date": "01-Oct-2024",
+        "customer_name": "Aarna Metallics",
+        "region": "North",
+        "product_division": "Structural Steel",
+        "next_steps": "Freight cost dispute resolved. PO confirmation awaited."
+      },
+      {
+        "owner_name": "Arjun Patel",
+        "visit_date": "18-Nov-2024",
+        "customer_name": "Bright Steels",
+        "region": "East",
+        "product_division": "Rebar & TMT",
+        "next_steps": "Customer paid ₹15L; balance ₹10L to clear by 20-Nov."
+      },
+      {
+        "owner_name": "Arjun Patel",
+        "visit_date": "05-Dec-2024",
+        "customer_name": "Crystal Infra",
+        "region": "South",
+        "product_division": "Automotive Steel",
+        "next_steps": "Year-end closure delaying PO. Expected release in early Jan-2025."
+      },
+      {
+        "owner_name": "Arjun Patel",
+        "visit_date": "22-Dec-2024",
+        "customer_name": "Dynamo Forge",
+        "region": "West",
+        "product_division": "Heavy Plates",
+        "next_steps": "Urgent site visit for crane safety compliance. Scheduled on 24-Dec."
+      },
+      {
+        "owner_name": "Neha Desai",
+        "visit_date": "09-Jul-2024",
+        "customer_name": "Eagle Steels",
+        "region": "East",
+        "product_division": "PEB Division",
+        "next_steps": "PO for 180 MT finalized. Delivery delayed due to port strike."
+      },
+      {
+        "owner_name": "Neha Desai",
+        "visit_date": "26-Jul-2024",
+        "customer_name": "Fusion Metals",
+        "region": "North",
+        "product_division": "Wire Rods",
+        "next_steps": "Customer requests DDP terms. Feasibility check with logistics."
+      },
+      {
+        "owner_name": "Neha Desai",
+        "visit_date": "12-Aug-2024",
+        "customer_name": "Globe Fabricators",
+        "region": "South",
+        "product_division": "Stainless Steel",
+        "next_steps": "Payment bounced due to insufficient funds. New cheque collected."
+      },
+      {
+        "owner_name": "Neha Desai",
+        "visit_date": "29-Sep-2024",
+        "customer_name": "Himalaya Constructions",
+        "region": "West",
+        "product_division": "Alloy Steel",
+        "next_steps": "Insurance docs incomplete. Resubmission by 1-Oct."
+      },
+      {
+        "owner_name": "Neha Desai",
+        "visit_date": "16-Oct-2024",
+        "customer_name": "Icon Engineering",
+        "region": "East",
+        "product_division": "Structural Steel",
+        "next_steps": "Customer demands 10MT trial at no cost. Proposal sent for approval."
+      },
+      {
+        "owner_name": "Neha Desai",
+        "visit_date": "02-Nov-2024",
+        "customer_name": "Jupiter Steels",
+        "region": "North",
+        "product_division": "Rebar & TMT",
+        "next_steps": "GST reconciliation pending. Account team to resolve by 5-Nov."
+      },
+      {
+        "owner_name": "Neha Desai",
+        "visit_date": "19-Nov-2024",
+        "customer_name": "Krishna Metallics",
+        "region": "South",
+        "product_division": "Automotive Steel",
+        "next_steps": "Urgent order for 60 MT. Production slot confirmed for 22-Nov."
+      },
+      {
+        "owner_name": "Neha Desai",
+        "visit_date": "06-Dec-2024",
+        "customer_name": "Lotus Infra",
+        "region": "West",
+        "product_division": "Heavy Plates",
+        "next_steps": "Bank guarantee validity extended. PO release expected next week."
+      },
+      {
+        "owner_name": "Neha Desai",
+        "visit_date": "23-Dec-2024",
+        "customer_name": "Magnet Steels",
+        "region": "East",
+        "product_division": "PEB Division",
+        "next_steps": "Customer dissatisfied with welding quality. Joint inspection planned."
+      },
+      {
+        "owner_name": "Neha Desai",
+        "visit_date": "09-Jan-2025",
+        "customer_name": "Nova Forge",
+        "region": "North",
+        "product_division": "Wire Rods",
+        "next_steps": "New year price list shared. Confirmation awaited."
+      },
+      {
+        "owner_name": "Vikram Joshi",
+        "visit_date": "14-Nov-2024",
+        "customer_name": "Orient Metals",
+        "region": "West",
+        "product_division": "Stainless Steel",
+        "next_steps": "Customer requests 180-day credit. Counteroffer of 90 days sent."
+      },
+      {
+        "owner_name": "Vikram Joshi",
+        "visit_date": "01-Dec-2024",
+        "customer_name": "Prime Steels",
+        "region": "South",
+        "product_division": "Alloy Steel",
+        "next_steps": "Quality test passed. Bulk PO for 400 MT in discussion."
+      },
+      {
+        "owner_name": "Vikram Joshi",
+        "visit_date": "18-Dec-2024",
+        "customer_name": "Quantum Fabricators",
+        "region": "North",
+        "product_division": "Structural Steel",
+        "next_steps": "Penalty clause added for delayed delivery. Legal team reviewing."
+      },
+      {
+        "owner_name": "Vikram Joshi",
+        "visit_date": "04-Jan-2025",
+        "customer_name": "Radiant Constructions",
+        "region": "East",
+        "product_division": "Rebar & TMT",
+        "next_steps": "Payment of ₹75L cleared. Next tranche due on 15-Jan."
+      },
+      {
+        "owner_name": "Vikram Joshi",
+        "visit_date": "21-Jan-2025",
+        "customer_name": "Sunrise Metallics",
+        "region": "West",
+        "product_division": "Automotive Steel",
+        "next_steps": "Sample dispatched for overseas client approval. Awaiting feedback."
+      },
+      {
+        "owner_name": "Vikram Joshi",
+        "visit_date": "07-Feb-2025",
+        "customer_name": "Trident Engineering",
+        "region": "South",
+        "product_division": "Heavy Plates",
+        "next_steps": "Customer negotiating 2% discount for early payment. Proposal pending."
+      },
+      {
+        "owner_name": "Vikram Joshi",
+        "visit_date": "24-Feb-2025",
+        "customer_name": "Unity Steels",
+        "region": "North",
+        "product_division": "PEB Division",
+        "next_steps": "Project delayed by 3 months. Revised PO expected in March."
+      },
+      {
+        "owner_name": "Vikram Joshi",
+        "visit_date": "12-Mar-2025",
+        "customer_name": "Vibrant Metals",
+        "region": "East",
+        "product_division": "Wire Rods",
+        "next_steps": "Bank mandate change delayed payment. New details submitted."
+      },
+      {
+        "owner_name": "Vikram Joshi",
+        "visit_date": "29-Mar-2025",
+        "customer_name": "Winrise Infra",
+        "region": "West",
+        "product_division": "Stainless Steel",
+        "next_steps": "Customer escalates rusting issue. Technical report submitted."
+      },
+      {
+        "owner_name": "Vikram Joshi",
+        "visit_date": "15-Apr-2025",
+        "customer_name": "Xeno Forge",
+        "region": "South",
+        "product_division": "Alloy Steel",
+        "next_steps": "Annual rate contract discussion stalled. Meeting with CFO on 20-Apr."
+      }
+    ]
+  }
