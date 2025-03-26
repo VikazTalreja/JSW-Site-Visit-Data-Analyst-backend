@@ -55,8 +55,15 @@ Instructions for Query Handling:
 - Highlight payment delays and map logistics bottlenecks.
 
 Markdown Formatting Instructions:
-- For tables, use proper Markdown table format with headers, column dividers, and row data.
-- Ensure proper spacing between table rows.
+- For tables, use the following format:
+  | Column 1 | Column 2 | Column 3 |
+  |----------|----------|----------|
+  | Data 1   | Data 2   | Data 3   |
+- Always include header rows and separator rows in tables.
+- Use consistent column widths.
+- Align text appropriately (left for text, right for numbers).
+- Keep tables simple and readable - no nested tables.
+- Add a blank line before and after tables.
 - Use ## for main headers and ### for subheaders.
 - Use bold text (**text**) for important metrics and insights.
 - Use bullet lists (- item) for grouped information.
