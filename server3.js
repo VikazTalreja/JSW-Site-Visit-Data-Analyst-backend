@@ -1,10 +1,19 @@
-const express = require('express');
-const cors = require('cors');
-const { OpenAIClient, AzureKeyCredential } = require('@azure/openai');
-const ModelClient = require('@azure-rest/ai-inference').default;
-const fs = require('fs');
-const path = require('path');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import { OpenAIClient, AzureKeyCredential } from '@azure/openai';
+import ModelClient from '@azure-rest/ai-inference';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import * as vectorSearch from './vector-search.js';
+
+// Configure environment variables
+dotenv.config();
+
+// Get current directory with ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -73,27 +82,66 @@ function initializeAzureOpenAI() {
   }
 }
 
-// Format the context data into a prompt for the AI
-function formatContextForAI(query) {
-  // Use all context data instead of just relevant ones
-  let contextText = 'Here is information about customer visits:\n\n';
-  
-  contextData.forEach((item, index) => {
-    contextText += `Visit #${index + 1}:\n`;
-    contextText += `Date: ${item.visit_date}\n`;
-    contextText += `Sales Person: ${item.salesperson_name} (${item.salesperson_email}) from ${item.salesperson_region} region\n`;
-    contextText += `Customer: ${item.customer_name} (SAP Code: ${item.customer_sap_code})\n`;
-    contextText += `Product Division: ${item.product_division}\n`;
-    contextText += `Next Steps: ${item.next_steps}\n`;
-    contextText += `Outcome: ${item.outcome_of_the_meeting}\n\n`;
-  });
-  
-  return contextText;
+// Initialize RAG system
+async function initializeRAG() {
+  try {
+    console.log('Initializing RAG system...');
+    const initialized = await vectorSearch.initVectorSearch();
+    if (initialized) {
+      console.log('RAG system initialized successfully');
+    } else {
+      console.error('Failed to initialize RAG system');
+    }
+    return initialized;
+  } catch (error) {
+    console.error('Error initializing RAG system:', error);
+    return false;
+  }
+}
+
+// Format the relevant context data into a prompt for the AI
+async function formatContextForAI(query) {
+  try {
+    // Get relevant context using vector search
+    console.log('Retrieving relevant context for query...');
+    const searchResult = await vectorSearch.searchSimilarContext(query, 10);
+    
+    if (!searchResult.success) {
+      console.error('Error retrieving context:', searchResult.error);
+      return { 
+        contextText: 'No relevant context found.',
+        contextCount: 0
+      };
+    }
+    
+    const relevantContext = searchResult.results;
+    console.log(`Found ${relevantContext.length} relevant context entries`);
+    
+    // Format the relevant context
+    let contextText = 'Here is the most relevant information about customer visits based on your query:\n\n';
+    
+    relevantContext.forEach((item, index) => {
+      contextText += `Visit #${index + 1} (Similarity: ${item.similarity.toFixed(3)}):\n`;
+      contextText += item.text + '\n\n';
+    });
+    
+    return {
+      contextText,
+      contextCount: relevantContext.length
+    };
+  } catch (error) {
+    console.error('Error formatting context for AI:', error);
+    return {
+      contextText: 'Error retrieving context data.',
+      contextCount: 0
+    };
+  }
 }
 
 // API endpoint to chat with the AI
 app.post('/api/chat', async (req, res) => {
   try {
+    // Initialize Azure OpenAI if needed
     if (!client) {
       console.log('Client not initialized, attempting to initialize...');
       const initialized = initializeAzureOpenAI();
@@ -101,6 +149,9 @@ app.post('/api/chat', async (req, res) => {
         return res.status(500).json({ error: 'Azure OpenAI client not initialized. Check server logs for details.' });
       }
     }
+    
+    // Initialize RAG system if not already initialized
+    await initializeRAG();
 
     const { message, conversation = [], model } = req.body;
     
@@ -108,15 +159,14 @@ app.post('/api/chat', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
     
-    console.log(`Processing query: "${message}" using model: ${model || deploymentName}`);
+    console.log(`Processing query: "${message}" using model: ${deploymentName}`);
     
-    // Get context information (now using all context data)
-    const contextInfo = formatContextForAI(message);
-    console.log(`Using all ${contextData.length} context entries`);
+    // Get relevant context information using RAG
+    const { contextText, contextCount } = await formatContextForAI(message);
+    console.log(`Using ${contextCount} relevant context entries for this query`);
     
-    // Prepare conversation history for the AI
-    const messages = [
-      { role: "system", content: `You are JSW Steel Sales Insight Assistant, an advanced analytical tool for business analysts. Your knowledge base includes:
+    // Prepare system message for the AI
+    const systemContent = `You are JSW Steel Sales Insight Assistant, an advanced analytical tool for business analysts. Your knowledge base includes:
 
 Analyze the provided sales visit reports to generate concise, insight-driven answers to the following business questions. Focus strictly on information explicitly mentioned in the data. Structure your response as a bulleted list under each question, including customer names, reasons, and direct excerpts from the reports as evidence.
 
@@ -135,15 +185,18 @@ Analytical Capabilities:
 4. Track major infrastructure projects and JSW's involvement:
 	◦	Extract mentions of government projects (e.g., PM Awas Yojna), industrial projects (e.g., semiconductor plants), or large-volume orders tied to specific developments.
 
+Below is the relevant context data based on the user's question. Use this to form your response:
+
+${contextText}
 
 Instructions for Query Handling:
-- Always cross-reference the 300-entry dataset with JSW's product/market data.
-- Prioritize actionable insights.
-- Use statistics, trends, and comparisons.
-- Segment data by region, product, owner, or timeline.
+- Always cross-reference the provided context entries with JSW's product/market data.
+- Prioritize actionable insights based on the most relevant context entries.
+- Use statistics, trends, and comparisons when possible.
+- Segment data by region, product, owner, or timeline if relevant.
 - Flag risks/opportunities.
 - Generate text-based chart descriptions with clear labels.
-- Highlight payment delays and map logistics bottlenecks.
+- Highlight payment delays and map logistics bottlenecks if mentioned.
 
 Markdown Formatting Instructions:
 - For tables, use the following format:
@@ -197,47 +250,45 @@ Example Queries & Responses:
 
 Chart Styling Guidelines:
 - Use black and gray shades for all chart elements.
-- Keep the design sleek and modern with minimal colors.
-- For backgroundColor, use varying gray shades with 0.7 opacity.
-- For borderColor, use black or dark gray with full opacity.
-- Consider using "chartType": "bar", "line", "pie", or "doughnut" based on the data being presented.
-
-Tone & Format:
-- Conciseness: Use bullet points, headers, and bold keywords.
-- Jargon: Avoid unless necessary.
-- Data Citations: Reference entry numbers and JSW sources.` },
-      { role: "user", content: `Here is the context information about customer visits:\n\n${contextInfo}\n\nUser question: ${message}` }
+- Keep the design sleek and modern with minimal colors.`;
+    
+    // Prepare messages array for API call
+    const messagesForAPI = [
+      { role: "system", content: systemContent }
     ];
     
-    // Add conversation history if available (limited to last 10 messages to manage context length)
-    if (conversation && conversation.length > 0) {
-      const recentConversation = conversation.slice(-10);
-      messages.splice(1, 0, ...recentConversation);
+    // Add conversation history if provided
+    if (Array.isArray(conversation) && conversation.length > 0) {
+      conversation.forEach(msg => {
+        if (msg && typeof msg === 'object' && msg.role && msg.content) {
+          messagesForAPI.push(msg);
+        }
+      });
     }
-
-    // Use the model specified in the request or default to the one from .env
-    const modelToUse = model || deploymentName;
     
-    // Call Azure OpenAI API
-    console.log(`Calling Azure OpenAI API (${modelToUse}) with ${messages.length} messages`);
+    // Add the current message
+    messagesForAPI.push({ role: "user", content: message });
+    
+    console.log(`Sending ${messagesForAPI.length} messages to Azure OpenAI API`);
+    
     try {
+      // Based on error trace, we need to fix how we call getChatCompletions
       const result = await client.getChatCompletions(
-        modelToUse, 
-        messages,
+        deploymentName,
+        messagesForAPI,
         {
           temperature: 0.7,
-          maxTokens: Infinity,
-          topP: 0.95
+          maxTokens: 4000
         }
       );
       
       if (!result || !result.choices || result.choices.length === 0) {
-        console.error('No valid response received from Azure OpenAI');
-        return res.status(500).json({ error: 'No response from AI' });
+        throw new Error('No response from Azure OpenAI API');
       }
       
       const reply = result.choices[0].message.content;
       console.log(`Received response of ${reply.length} characters`);
+      console.log(reply);
       
       // Extract chart data if present in the response
       let chartData = null;
@@ -294,9 +345,9 @@ Tone & Format:
         },
         chartData: chartData,
         usage: { 
-          prompt_tokens: messages.reduce((acc, msg) => acc + msg.content.length, 0),
+          prompt_tokens: messagesForAPI.reduce((acc, msg) => acc + msg.content.length, 0),
           completion_tokens: reply.length,
-          total_tokens: messages.reduce((acc, msg) => acc + msg.content.length, 0) + reply.length
+          total_tokens: messagesForAPI.reduce((acc, msg) => acc + msg.content.length, 0) + reply.length
         }
       };
 
@@ -311,10 +362,7 @@ Tone & Format:
       res.json(responseObject);
     } catch (apiError) {
       console.error('Azure OpenAI API Error:', apiError);
-      return res.status(500).json({ 
-        error: `Azure OpenAI API Error: ${apiError.message}`,
-        details: apiError.toString()
-      });
+      res.status(500).json({ error: 'Error calling Azure OpenAI API', details: apiError.message });
     }
   } catch (error) {
     console.error('Error in chat endpoint:', error);
@@ -325,12 +373,16 @@ Tone & Format:
 // API endpoint for streaming responses from the AI
 app.post('/api/chat/stream', async (req, res) => {
   try {
+    // Initialize Azure OpenAI if needed
     if (!client || !modelClient) {
       const initialized = initializeAzureOpenAI();
       if (!initialized) {
         return res.status(500).json({ error: 'Azure OpenAI client not initialized' });
       }
     }
+    
+    // Initialize RAG system if not already initialized
+    await initializeRAG();
 
     const { message, conversation = [], model } = req.body;
     
@@ -338,12 +390,12 @@ app.post('/api/chat/stream', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
     
-    // Get context information using all context data
-    const contextInfo = formatContextForAI(message);
-    console.log(`Streaming: Using all ${contextData.length} context entries`);
+    // Get relevant context information using RAG
+    const { contextText, contextCount } = await formatContextForAI(message);
+    console.log(`Streaming: Using ${contextCount} relevant context entries for this query`);
     
-    // Get the same system prompt used in the regular endpoint
-    const systemPrompt = `You are JSW Steel Sales Insight Assistant, an advanced analytical tool for business analysts. Your knowledge base includes:
+    // Prepare system message for the AI
+    const systemContent = `You are JSW Steel Sales Insight Assistant, an advanced analytical tool for business analysts. Your knowledge base includes:
 
 Analyze the provided sales visit reports to generate concise, insight-driven answers to the following business questions. Focus strictly on information explicitly mentioned in the data. Structure your response as a bulleted list under each question, including customer names, reasons, and direct excerpts from the reports as evidence.
 
@@ -362,15 +414,18 @@ Analytical Capabilities:
 4. Track major infrastructure projects and JSW's involvement:
 	◦	Extract mentions of government projects (e.g., PM Awas Yojna), industrial projects (e.g., semiconductor plants), or large-volume orders tied to specific developments.
 
+Below is the relevant context data based on the user's question. Use this to form your response:
+
+${contextText}
 
 Instructions for Query Handling:
-- Always cross-reference the 300-entry dataset with JSW's product/market data.
-- Prioritize actionable insights.
-- Use statistics, trends, and comparisons.
-- Segment data by region, product, owner, or timeline.
+- Always cross-reference the provided context entries with JSW's product/market data.
+- Prioritize actionable insights based on the most relevant context entries.
+- Use statistics, trends, and comparisons when possible.
+- Segment data by region, product, owner, or timeline if relevant.
 - Flag risks/opportunities.
 - Generate text-based chart descriptions with clear labels.
-- Highlight payment delays and map logistics bottlenecks.
+- Highlight payment delays and map logistics bottlenecks if mentioned.
 
 Markdown Formatting Instructions:
 - For tables, use the following format:
@@ -424,26 +479,24 @@ Example Queries & Responses:
 
 Chart Styling Guidelines:
 - Use black and gray shades for all chart elements.
-- Keep the design sleek and modern with minimal colors.
-- For backgroundColor, use varying gray shades with 0.7 opacity.
-- For borderColor, use black or dark gray with full opacity.
-- Consider using "chartType": "bar", "line", "pie", or "doughnut" based on the data being presented.
-
-Tone & Format:
-- Conciseness: Use bullet points, headers, and bold keywords.
-- Jargon: Avoid unless necessary.
-- Data Citations: Reference entry numbers and JSW sources.`;
+- Keep the design sleek and modern with minimal colors.`;
     
-    // Prepare conversation history for the AI
-    const messages = [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: `Here is the context information about customer visits:\n\n${contextInfo}\n\nUser question: ${message}` }
+    // Prepare messages array for API call
+    const messagesForAPI = [
+      { role: "system", content: systemContent }
     ];
     
-    if (conversation && conversation.length > 0) {
-      const recentConversation = conversation.slice(-10);
-      messages.splice(1, 0, ...recentConversation);
+    // Add conversation history if provided
+    if (Array.isArray(conversation) && conversation.length > 0) {
+      conversation.forEach(msg => {
+        if (msg && typeof msg === 'object' && msg.role && msg.content) {
+          messagesForAPI.push(msg);
+        }
+      });
     }
+    
+    // Add the current message
+    messagesForAPI.push({ role: "user", content: message });
 
     // Use the model specified in the request or default to the one from .env
     const modelToUse = model || deploymentName;
@@ -454,24 +507,24 @@ Tone & Format:
     res.setHeader('Connection', 'keep-alive');
 
     try {
-      console.log(`Making streaming request to ${modelToUse}...`);
+      console.log(`Making streaming request to ${modelToUse} with ${messagesForAPI.length} messages...`);
       
       // Get the deployment-specific endpoint
       const deploymentEndpoint = `${process.env.AZURE_OPENAI_ENDPOINT}/openai/deployments/${modelToUse}`;
       
       // Create a fresh instance of ModelClient for this request
-      const client = new ModelClient(
+      const streamClient = new ModelClient(
         deploymentEndpoint, 
         new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY)
       );
       
-      const streamResponse = await client.path("/chat/completions").post({
+      // For the POST body of streaming calls, we set the messages directly
+      const streamResponse = await streamClient.path("/chat/completions").post({
         body: {
-          messages: messages,
+          messages: messagesForAPI,
           max_tokens: 4000,
           temperature: 0.7,
           top_p: 0.95,
-          model: modelToUse,
           stream: true
         }
       });
@@ -554,7 +607,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', contextRecords: contextData.length });
 });
 
-// Test Azure OpenAI connection
+// Fix the test-azure endpoint
 app.get('/test-azure', async (req, res) => {
   try {
     if (!client) {
@@ -580,7 +633,15 @@ app.get('/test-azure', async (req, res) => {
     ];
     
     console.log(`Testing connection to Azure OpenAI (${deploymentName})...`);
-    const result = await client.getChatCompletions(deploymentName, testMessages);
+    
+    const result = await client.getChatCompletions(
+      deploymentName,
+      testMessages,
+      {
+        temperature: 0.7,
+        maxTokens: 100
+      }
+    );
     
     if (!result || !result.choices || result.choices.length === 0) {
       return res.status(500).json({ 
@@ -607,11 +668,23 @@ app.get('/test-azure', async (req, res) => {
   }
 });
 
-// Start the server
-app.listen(PORT, () => {
+// Initialize the server
+app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
-  // Initialize OpenAI client
-  initializeAzureOpenAI();
-});
-
-module.exports = app; 
+  
+  // Initialize the OpenAI client
+  const initialized = initializeAzureOpenAI();
+  if (initialized) {
+    console.log('Azure OpenAI client initialized successfully');
+  } else {
+    console.error('Failed to initialize Azure OpenAI client');
+  }
+  
+  // Initialize the RAG system
+  const ragInitialized = await initializeRAG();
+  if (ragInitialized) {
+    console.log('RAG system ready for queries');
+  } else {
+    console.error('Failed to initialize RAG system');
+  }
+}); 

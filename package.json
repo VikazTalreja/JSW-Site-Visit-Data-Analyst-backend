@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "A chatbot for customer visit information using Azure OpenAI",
   "main": "server3.js",
+  "type": "module",
   "scripts": {
     "start": "node server3.js",
     "dev": "nodemon server3.js",
-    "convert": "node convert-excel-to-json.js"
+    "convert": "node convert-excel-to-json.js",
+    "generate-embeddings": "node generate-embeddings.js"
   },
   "keywords": [],
   "author": "",
@@ -16,10 +18,12 @@
     "@azure/core-auth": "latest",
     "@azure/core-sse": "latest",
     "@azure/openai": "^1.0.0-beta.2",
+    "@xenova/transformers": "^2.14.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "node-fetch": "^3.3.2",
+    "onnxruntime-node": "^1.17.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
