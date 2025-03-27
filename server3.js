@@ -159,7 +159,7 @@ Markdown Formatting Instructions:
 - Use bold text (*text*) for important metrics and insights.
 - Use bullet lists (- item) for grouped information.
 - For numerical data, use consistent formatting (e.g., "₹42 Cr" for currency).
-
+- if mentioning the Customer Name Mention Their Customer_sap_code Also MUST 
 IMPORTANT: For EVERY response, you MUST include:
 1. Text-based insights in Markdown format with bullet points, headers and key metrics
 2. Chart data in JSON format within a code block like this:
@@ -246,25 +246,48 @@ Tone & Format:
       try {
         // Look for JSON block in markdown format
         const jsonMatch = reply.match(/```json\n([\s\S]*?)\n```/);
+        console.log('Checking for chart data in response...');
+        
         if (jsonMatch && jsonMatch[1]) {
-          const parsedData = JSON.parse(jsonMatch[1]);
-          if (parsedData.chartData) {
-            chartData = parsedData.chartData;
-            console.log('Found chart data in response');
+          console.log('Found JSON block in markdown format');
+          // Clean up the JSON string before parsing
+          const jsonString = jsonMatch[1]
+            .trim()
+            .replace(/[\u2018\u2019]/g, "'")   // Replace smart quotes
+            .replace(/[\u201C\u201D]/g, '"')   // Replace smart double quotes
+            .replace(/(\w+):/g, '"$1":')       // Ensure property names are double-quoted
+            .replace(/,\s*}/g, '}')            // Remove trailing commas
+            .replace(/,\s*]/g, ']');           // Remove trailing commas in arrays
             
-            // Remove the JSON block from the content since we're providing it separately
-            cleanedContent = reply.replace(/```json\n[\s\S]*?\n```/, '');
-            // Clean up any double line breaks that might have been created
-            cleanedContent = cleanedContent.replace(/\n\n\n+/g, '\n\n');
-            console.log('Removed JSON chart data from response content');
+          console.log('Cleaned JSON string:', jsonString);
+            
+          try {
+            const parsedData = JSON.parse(jsonString);
+            if (parsedData.chartData) {
+              chartData = parsedData.chartData;
+              console.log('Successfully parsed chart data:', JSON.stringify(chartData, null, 2));
+              
+              // Remove the JSON block from the content since we're providing it separately
+              cleanedContent = reply.replace(/```json\n[\s\S]*?\n```/, '');
+              // Clean up any double line breaks that might have been created
+              cleanedContent = cleanedContent.replace(/\n\n\n+/g, '\n\n');
+              console.log('Removed JSON chart data from response content');
+            } else {
+              console.warn('Parsed JSON does not contain chartData property');
+            }
+          } catch (jsonError) {
+            console.error('Error parsing cleaned JSON:', jsonError);
+            console.error('Problematic JSON string:', jsonString);
           }
+        } else {
+          console.warn('No JSON chart data block found in the response');
         }
       } catch (parseError) {
-        console.error('Error parsing chart data from response:', parseError);
+        console.error('Error in chart data extraction:', parseError);
       }
       
-      // Format the response to match the expected structure from server2.js
-      res.json({ 
+      // Prepare the response object
+      const responseObject = { 
         response: {
           role: 'assistant',
           content: cleanedContent,
@@ -275,7 +298,17 @@ Tone & Format:
           completion_tokens: reply.length,
           total_tokens: messages.reduce((acc, msg) => acc + msg.content.length, 0) + reply.length
         }
-      });
+      };
+
+      // Log the complete response being sent to frontend
+      console.log('Sending response to frontend:', JSON.stringify({
+        contentLength: cleanedContent.length,
+        hasChartData: !!chartData,
+        chartType: chartData?.chartType,
+        usage: responseObject.usage
+      }, null, 2));
+
+      res.json(responseObject);
     } catch (apiError) {
       console.error('Azure OpenAI API Error:', apiError);
       return res.status(500).json({ 
