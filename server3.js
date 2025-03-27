@@ -10,7 +10,11 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
@@ -71,12 +75,10 @@ function initializeAzureOpenAI() {
 
 // Format the context data into a prompt for the AI
 function formatContextForAI(query) {
-  // Get relevant context based on the query
-  const relevantContext = getRelevantContext(query);
-  
+  // Use all context data instead of just relevant ones
   let contextText = 'Here is information about customer visits:\n\n';
   
-  relevantContext.forEach((item, index) => {
+  contextData.forEach((item, index) => {
     contextText += `Visit #${index + 1}:\n`;
     contextText += `Date: ${item.visit_date}\n`;
     contextText += `Sales Person: ${item.salesperson_name} (${item.salesperson_email}) from ${item.salesperson_region} region\n`;
@@ -87,29 +89,6 @@ function formatContextForAI(query) {
   });
   
   return contextText;
-}
-
-// Simple function to find relevant context based on query keywords
-function getRelevantContext(query) {
-  if (!contextData || contextData.length === 0) {
-    return [];
-  }
-  
-  // Convert query to lowercase for case-insensitive matching
-  const queryLower = query.toLowerCase();
-  
-  // Look for keywords in the query
-  return contextData.filter(item => {
-    // Check various fields for matches
-    const customerNameMatch = item.customer_name && item.customer_name.toLowerCase().includes(queryLower);
-    const salesPersonMatch = item.salesperson_name && item.salesperson_name.toLowerCase().includes(queryLower);
-    const regionMatch = item.salesperson_region && item.salesperson_region.toLowerCase().includes(queryLower);
-    const productMatch = item.product_division && item.product_division.toLowerCase().includes(queryLower);
-    const nextStepsMatch = item.next_steps && item.next_steps.toLowerCase().includes(queryLower);
-    const outcomeMatch = item.outcome_of_the_meeting && item.outcome_of_the_meeting.toLowerCase().includes(queryLower);
-    
-    return customerNameMatch || salesPersonMatch || regionMatch || productMatch || nextStepsMatch || outcomeMatch;
-  }).slice(0, 5); // Limit to 5 most relevant results
 }
 
 // API endpoint to chat with the AI
@@ -131,10 +110,9 @@ app.post('/api/chat', async (req, res) => {
     
     console.log(`Processing query: "${message}" using model: ${model || deploymentName}`);
     
-    // Get context information relevant to the user's query
+    // Get context information (now using all context data)
     const contextInfo = formatContextForAI(message);
-    const relevantContextCount = getRelevantContext(message).length;
-    console.log(`Found ${relevantContextCount} relevant context entries`);
+    console.log(`Using all ${contextData.length} context entries`);
     
     // Prepare conversation history for the AI
     const messages = [
@@ -248,7 +226,7 @@ Tone & Format:
         messages,
         {
           temperature: 0.7,
-          maxTokens: 4000,
+          maxTokens: Infinity,
           topP: 0.95
         }
       );
@@ -263,6 +241,8 @@ Tone & Format:
       
       // Extract chart data if present in the response
       let chartData = null;
+      let cleanedContent = reply;
+      
       try {
         // Look for JSON block in markdown format
         const jsonMatch = reply.match(/```json\n([\s\S]*?)\n```/);
@@ -271,6 +251,12 @@ Tone & Format:
           if (parsedData.chartData) {
             chartData = parsedData.chartData;
             console.log('Found chart data in response');
+            
+            // Remove the JSON block from the content since we're providing it separately
+            cleanedContent = reply.replace(/```json\n[\s\S]*?\n```/, '');
+            // Clean up any double line breaks that might have been created
+            cleanedContent = cleanedContent.replace(/\n\n\n+/g, '\n\n');
+            console.log('Removed JSON chart data from response content');
           }
         }
       } catch (parseError) {
@@ -281,7 +267,7 @@ Tone & Format:
       res.json({ 
         response: {
           role: 'assistant',
-          content: reply
+          content: cleanedContent,
         },
         chartData: chartData,
         usage: { 
@@ -319,8 +305,9 @@ app.post('/api/chat/stream', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
     
-    // Get context information relevant to the user's query
+    // Get context information using all context data
     const contextInfo = formatContextForAI(message);
+    console.log(`Streaming: Using all ${contextData.length} context entries`);
     
     // Get the same system prompt used in the regular endpoint
     const systemPrompt = `You are JSW Steel Sales Insight Assistant, an advanced analytical tool for business analysts. Your knowledge base includes:
