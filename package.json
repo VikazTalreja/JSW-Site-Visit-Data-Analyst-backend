@@ -1,21 +1,28 @@
 {
-  "name": "backend",
+  "name": "customer-visits-chatbot",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "A chatbot for customer visit information using Azure OpenAI",
+  "main": "server3.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "start": "node server3.js",
+    "dev": "nodemon server3.js",
+    "convert": "node convert-excel-to-json.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "axios": "^1.8.4",
-    "chart.js": "^4.4.8",
+    "@azure-rest/ai-inference": "^1.0.0-beta.6",
+    "@azure/core-auth": "latest",
+    "@azure/core-sse": "latest",
+    "@azure/openai": "^1.0.0-beta.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "openai": "^4.89.0"
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
   }
 }

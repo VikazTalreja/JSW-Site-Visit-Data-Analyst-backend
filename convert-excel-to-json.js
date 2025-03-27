@@ -45,16 +45,16 @@ function convertExcelToJson() {
       }
       
       return {
-        "Visit Plan: Visit Date": visitDate,
-        "Visit Report: Created Date": createdDate,
-        "Visit Plan: Owner Region": row['Visit Plan: Owner Region'],
-        "Visit Plan: Visit Owner Email": row['Visit Plan: Visit Owner Email'],
-        "Visit Plan: Owner Name": row['Visit Plan: Owner Name'],
-        "Customer": row['Customer'],
-        "Customer SAP Code": row['Customer SAP Code'],
-        "Visit Plan: Product Division": row['Visit Plan: Product Division'],
-        "Next Steps": row['Next Steps'],
-        "Outcome of meeting": row['Outcome of meeting']
+        "visit_date": visitDate,
+        "report_creation_date": createdDate,
+        "salesperson_region": row['Visit Plan: Owner Region'],
+        "salesperson_email": row['Visit Plan: Visit Owner Email'],
+        "salesperson_name": row['Visit Plan: Owner Name'],
+        "customer_name": row['Customer'],
+        "customer_sap_code": row['Customer SAP Code'],
+        "product_division": row['Visit Plan: Product Division'],
+        "next_steps": row['Next Steps'],
+        "outcome_of_the_meeting": row['Outcome of meeting']
       };
     });
     
