@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import * as vectorSearch from './vector-search.js';
+import * as vectorSearch from './xenova-excel-vector-search.js';
 
 // Configure environment variables
 dotenv.config();
@@ -104,7 +104,7 @@ async function formatContextForAI(query) {
   try {
     // Get relevant context using vector search
     console.log('Retrieving relevant context for query...');
-    const searchResult = await vectorSearch.searchSimilarContext(query, 10);
+    const searchResult = await vectorSearch.searchSimilarContext(query, 50);
     
     if (!searchResult.success) {
       console.error('Error retrieving context:', searchResult.error);
