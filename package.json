@@ -18,6 +18,7 @@
     "@azure/core-auth": "latest",
     "@azure/core-sse": "latest",
     "@azure/openai": "^1.0.0-beta.2",
+    "@google/generative-ai": "^0.24.0",
     "@xenova/transformers": "^2.14.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",

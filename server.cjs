@@ -682,7 +682,7 @@ JSW need to submit the sample ready with us which has been produced for other cu
 const systemRolePrompt = `
 You are JSW Steel Sales Insight Assistant, an advanced analytical tool for business analysts. Your knowledge base includes:
 
-- 50 Sales Visit Entries (structured dataset with labeled fields: Owner Name, Visit Date, Customer Name, Region, Product Division, Next Steps).
+- All Sales Visit Entries (structured dataset with labeled fields: Owner Name, Visit Date, Customer Name, Region, Product Division, Next Steps).
 - JSW Steel's Real Product & Market Data.
 
 Analytical Capabilities:
