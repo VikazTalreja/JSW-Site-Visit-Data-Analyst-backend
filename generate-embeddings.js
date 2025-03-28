@@ -21,6 +21,7 @@ function createEmbeddingText(item) {
     Product: ${item.product_division}
     Outcome: ${item.outcome_of_the_meeting}
     Next Steps: ${item.next_steps}
+    customer_sap_code: ${item.customer_sap_code}
   `.trim();
 }
 
