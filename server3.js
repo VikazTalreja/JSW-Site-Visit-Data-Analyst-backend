@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: ['https://jsw-rag-site-chatbot.vercel.app/','http://localhost:3000'],
+  origin: '*',
   methods: ['GET', 'POST'],
   credentials: true
 }));
