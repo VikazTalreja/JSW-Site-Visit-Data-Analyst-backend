@@ -150,8 +150,7 @@ Tone & Format:
 - Jargon: Avoid unless necessary.
 - Data Citations: Reference entry numbers and JSW sources.
 
-
-****USE DATA ONLY IF QUESTION Asked****
+USE THIS Context to ANSWER : ${contextData}
 `;
 
 async function getGeminiResponse(userMessage) {
@@ -171,14 +170,14 @@ async function getGeminiResponse(userMessage) {
 
 // Chat endpoint
 app.post('/api/chat', async (req, res) => {
-  try {s
+  try {
     const { messages } = req.body;
     
     // Get the last user message
     const lastMessage = messages;
     
     // Include the system prompt with each request
-    const fullPrompt = `${systemRolePrompt}\n\nUser Query: ${lastMessage} DATA:${contextData}  `;
+    const fullPrompt = `${systemRolePrompt}\n\nUser Query: ${lastMessage} `;
     
     const result = await model.generateContent(fullPrompt); 
     const response = await result.response;
